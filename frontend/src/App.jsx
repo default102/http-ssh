@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, Plus, Trash2, Key, Server, Settings, Monitor, Play, Menu, X, XCircle } from 'react-feather';
+import { Terminal, Plus, Trash2, Key, Server, Settings, Monitor, Play, Menu, X, XCircle, RefreshCw } from 'react-feather';
 import TerminalWindow from './components/TerminalWindow';
 import './index.css';
 
@@ -111,7 +111,7 @@ function App() {
   // Tab Logic
   const openServerConnection = (server) => {
     const tabId = `tab_${server.id}_${Date.now()}`; // Allow multiple connections to same server
-    setActiveTabs(tabs => [...tabs, { id: tabId, server, status: 'initializing' }]);
+    setActiveTabs(tabs => [...tabs, { id: tabId, server, status: 'initializing', reconnectKey: 0 }]);
     setCurrentTabId(tabId);
     if (window.innerWidth <= 768) {
         setIsSidebarOpen(false); // Auto-close sidebar on mobile
@@ -139,6 +139,11 @@ function App() {
       setCurrentTabId(newTabs.length > 0 ? newTabs[newTabs.length - 1].id : null);
     }
     setActiveTabs(newTabs);
+  };
+
+  const reconnectTab = (tabId, e) => {
+    if(e) e.stopPropagation();
+    setActiveTabs(tabs => tabs.map(t => t.id === tabId ? { ...t, status: 'initializing', reconnectKey: (t.reconnectKey || 0) + 1 } : t));
   };
 
   return (
@@ -227,12 +232,21 @@ function App() {
                       key={tab.id} 
                       className={`tab-item ${currentTabId === tab.id ? 'active' : ''}`}
                       onClick={() => setCurrentTabId(tab.id)}
+                      title={tab.status}
                    >
+                       <span className={`status-dot ${tab.status || 'closed'}`}></span>
                        <Monitor size={14} />
                        <span className="tab-title">{tab.server.name}</span>
-                       <button className="tab-close-btn" onClick={(e) => closeTab(tab.id, e)}>
-                           <X size={14} />
-                       </button>
+                       <div className="tab-actions">
+                         {tab.status === 'closed' && (
+                           <button className="tab-icon-btn reconnect" title="重新连接" onClick={(e) => reconnectTab(tab.id, e)}>
+                             <RefreshCw size={12} />
+                           </button>
+                         )}
+                         <button className="tab-icon-btn close" title="关闭标签" onClick={(e) => closeTab(tab.id, e)}>
+                             <X size={14} />
+                         </button>
+                       </div>
                    </div>
                 ))}
              </div>
@@ -246,7 +260,9 @@ function App() {
                        style={{ display: currentTabId === tab.id ? 'flex' : 'none' }}
                     >
                         <TerminalWindow 
+                            key={`${tab.id}_${tab.reconnectKey}`}
                             server={tab.server} 
+                            isActive={currentTabId === tab.id}
                             onConnectionChange={(status) => updateTabStatus(tab.id, status)} 
                         />
                     </div>

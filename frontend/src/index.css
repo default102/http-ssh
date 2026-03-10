@@ -315,7 +315,24 @@ button.close-sidebar-btn {
   text-overflow: ellipsis;
 }
 
-.tab-close-btn {
+/* Tab Status and Actions */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px currentcolor;
+}
+.status-dot.connecting { background-color: #d2a8ff; color: #d2a8ff; }
+.status-dot.connected { background-color: #3fb950; color: #3fb950; }
+.status-dot.closed { background-color: #ff7b72; color: #ff7b72; }
+
+.tab-actions {
+  display: flex;
+  align-items: center;
+}
+
+.tab-icon-btn {
   background: transparent;
   border: none;
   color: inherit;
@@ -327,10 +344,12 @@ button.close-sidebar-btn {
   justify-content: center;
   opacity: 0.6;
 }
-.tab-close-btn:hover {
+.tab-icon-btn:hover {
   opacity: 1;
   background: rgba(255, 255, 255, 0.1);
 }
+.tab-icon-btn.reconnect:hover { color: #3fb950; }
+.tab-icon-btn.close:hover { color: #ff7b72; }
 
 .tabs-content {
   flex-grow: 1;

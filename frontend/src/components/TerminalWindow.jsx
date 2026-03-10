@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import { WebLinksAddon } from 'xterm-addon-web-links';
 import 'xterm/css/xterm.css';
 
-const TerminalWindow = ({ server, onConnectionChange }) => {
+const TerminalWindow = ({ server, onConnectionChange, isActive }) => {
     const terminalRef = useRef(null);
     const wsRef = useRef(null);
     const termInstance = useRef(null);
@@ -33,7 +34,9 @@ const TerminalWindow = ({ server, onConnectionChange }) => {
         });
 
         fitAddon.current = new FitAddon();
+        const webLinksAddon = new WebLinksAddon();
         termInstance.current.loadAddon(fitAddon.current);
+        termInstance.current.loadAddon(webLinksAddon);
         termInstance.current.open(terminalRef.current);
         fitAddon.current.fit();
 
@@ -97,8 +100,22 @@ const TerminalWindow = ({ server, onConnectionChange }) => {
 
     }, [server.id]);
 
+    useEffect(() => {
+        if (isActive && termInstance.current) {
+            // Give layout a tiny bit of time to render flex, then fit and focus
+            setTimeout(() => {
+                if(fitAddon.current) fitAddon.current.fit();
+                termInstance.current.focus();
+            }, 50);
+        }
+    }, [isActive]);
+
     return (
-        <div ref={terminalRef} className="terminal-wrapper" />
+        <div 
+           ref={terminalRef} 
+           className="terminal-wrapper" 
+           onClick={() => termInstance.current && termInstance.current.focus()} 
+        />
     );
 };
 
