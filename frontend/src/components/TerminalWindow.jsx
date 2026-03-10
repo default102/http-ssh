@@ -30,7 +30,7 @@ const TerminalWindow = ({ server, onConnectionChange, isActive }) => {
                 white: '#f0f6fc',
             },
             fontFamily: '"JetBrains Mono", monospace',
-            fontSize: 14,
+            fontSize: 13,
         });
 
         fitAddon.current = new FitAddon();

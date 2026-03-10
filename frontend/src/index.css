@@ -185,6 +185,10 @@ button.close-sidebar-btn {
   text-overflow: ellipsis;
 }
 
+.item-info svg {
+  flex-shrink: 0;
+}
+
 .item-info small {
   color: var(--text-secondary);
   font-size: 0.75rem;
