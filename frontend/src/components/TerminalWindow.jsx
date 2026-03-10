@@ -1,22 +1,41 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import 'xterm/css/xterm.css';
 
-const TerminalWindow = ({ server, onConnectionChange, isActive }) => {
+const TerminalWindow = forwardRef(({ server, onConnectionChange, isActive }, ref) => {
     const terminalRef = useRef(null);
     const wsRef = useRef(null);
     const termInstance = useRef(null);
     const fitAddon = useRef(null);
+
+    useImperativeHandle(ref, () => ({
+        copySelectionOrAll: () => {
+            if (!termInstance.current) return;
+            let text = termInstance.current.getSelection();
+            if (!text) {
+                // If no active selection, select all text and copy
+                termInstance.current.selectAll();
+                text = termInstance.current.getSelection();
+                setTimeout(() => termInstance.current.clearSelection(), 200);
+            }
+            if (text) {
+                navigator.clipboard.writeText(text).catch(err => console.error('Copy failed', err));
+                return true;
+            }
+            return false;
+        }
+    }));
 
     useEffect(() => {
         if (!terminalRef.current) return;
 
         termInstance.current = new Terminal({
             cursorBlink: true,
+            allowTransparency: true,
             theme: {
-                background: '#000000',
+                background: 'transparent',
                 foreground: '#e6edf3',
                 cursor: '#2f81f7',
                 selectionBackground: 'rgba(47, 129, 247, 0.3)',
@@ -117,6 +136,6 @@ const TerminalWindow = ({ server, onConnectionChange, isActive }) => {
            onClick={() => termInstance.current && termInstance.current.focus()} 
         />
     );
-};
+});
 
 export default TerminalWindow;

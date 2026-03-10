@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Terminal, Plus, Trash2, Key, Server, Settings, Monitor, Play, Menu, X, XCircle, RefreshCw } from 'react-feather';
+import React, { useState, useEffect, useRef } from 'react';
+import { Terminal, Plus, Trash2, Key, Server, Settings, Monitor, Play, Menu, X, XCircle, RefreshCw, Copy } from 'react-feather';
 import TerminalWindow from './components/TerminalWindow';
 import './index.css';
 
@@ -10,6 +10,7 @@ function App() {
   // Tabbed Terminals State
   const [activeTabs, setActiveTabs] = useState([]); // [{id: 1, server: {...}}]
   const [currentTabId, setCurrentTabId] = useState(null);
+  const terminalRefs = useRef({});
   
   // Modals & Menu State
   const [showAddServer, setShowAddServer] = useState(false);
@@ -238,6 +239,12 @@ function App() {
                        <Monitor size={14} />
                        <span className="tab-title">{tab.server.name}</span>
                        <div className="tab-actions">
+                         <button className="tab-icon-btn copy" title="复制内容" onClick={(e) => {
+                             e.stopPropagation();
+                             if(terminalRefs.current[tab.id]) terminalRefs.current[tab.id].copySelectionOrAll();
+                         }}>
+                             <Copy size={12} />
+                         </button>
                          {tab.status === 'closed' && (
                            <button className="tab-icon-btn reconnect" title="重新连接" onClick={(e) => reconnectTab(tab.id, e)}>
                              <RefreshCw size={12} />
@@ -260,6 +267,7 @@ function App() {
                        style={{ display: currentTabId === tab.id ? 'flex' : 'none' }}
                     >
                         <TerminalWindow 
+                            ref={(el) => { terminalRefs.current[tab.id] = el; }}
                             key={`${tab.id}_${tab.reconnectKey}`}
                             server={tab.server} 
                             isActive={currentTabId === tab.id}

@@ -20,17 +20,21 @@
 
 body {
   font-family: 'Inter', -apple-system, sans-serif;
-  background-color: var(--bg-color);
+  background-color: #0b0f19; /* Deeper midnight blue-black */
   color: var(--text-primary);
   overflow: hidden;
   overscroll-behavior: none; /* Prevents iOS rubber-banding */
-  background: radial-gradient(circle at top left, #1f2937, #0d1117 40%);
+  /* Premium Mesh Gradient for modern aesthetics */
+  background-image: 
+    radial-gradient(ellipse at 15% 50%, rgba(47, 129, 247, 0.15), transparent 45%),
+    radial-gradient(ellipse at 85% 30%, rgba(188, 140, 255, 0.1), transparent 45%),
+    radial-gradient(ellipse at 50% 100%, rgba(63, 185, 80, 0.05), transparent 50%);
 }
 
-/* Custom Webkit Scrollbars */
+/* Custom Webkit Scrollbars (Premium Minimal) */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -38,25 +42,29 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* Specific styling for xterm viewport scrollbar to blend with black background */
+/* Specific styling for xterm viewport scrollbar to blend natively */
 .xterm .xterm-viewport::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
 }
 .xterm .xterm-viewport::-webkit-scrollbar-track {
-  background: #000; 
+  background: transparent; 
 }
 .xterm .xterm-viewport::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid #000;
-  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 3px;
+}
+.xterm .xterm-viewport {
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
 }
 
 .app-container {
@@ -70,20 +78,20 @@ body {
   height: 100%;
 }
 
-/* Glassmorphism Classes */
+/* Glassmorphism Classes (Enhanced Premium) */
 .glass-panel {
-  background: var(--bg-panel);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border-color);
+  background: rgba(11, 15, 25, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .wrapper-glass {
-  background: rgba(13, 17, 23, 0.4);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255,255,255,0.05);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  background: rgba(11, 15, 25, 0.4);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 /* Sidebar */
@@ -92,12 +100,14 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border-color);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
   padding: 24px 16px;
   box-shadow: 4px 0 24px rgba(0,0,0,0.2);
   z-index: 20;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  background: var(--bg-color); /* solid backdrop helps on mobile */
+  background: rgba(11, 15, 25, 0.65); /* Keeps glass transparency */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .sidebar-header-mobile {
@@ -280,10 +290,10 @@ button.close-sidebar-btn {
 
 .tabs-header {
   display: flex;
-  background: rgba(0, 0, 0, 0.4);
-  border-bottom: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   overflow-x: auto;
-  min-height: 44px;
+  min-height: 48px;
 }
 .tabs-header::-webkit-scrollbar {
   display: none;
@@ -310,9 +320,10 @@ button.close-sidebar-btn {
 }
 
 .tab-item.active {
-  background: rgba(47, 129, 247, 0.1);
+  background: linear-gradient(to top, rgba(47, 129, 247, 0.12) 0%, transparent 100%);
   color: var(--accent-color);
   border-bottom: 2px solid var(--accent-color);
+  box-shadow: inset 0 -1px 0 rgba(47, 129, 247, 0.3);
 }
 
 .tab-title {
@@ -357,13 +368,14 @@ button.close-sidebar-btn {
   opacity: 1;
   background: rgba(255, 255, 255, 0.1);
 }
+.tab-icon-btn.copy:hover { color: #2f81f7; }
 .tab-icon-btn.reconnect:hover { color: #3fb950; }
 .tab-icon-btn.close:hover { color: #ff7b72; }
 
 .tabs-content {
   flex-grow: 1;
   position: relative;
-  background: #000;
+  background: transparent; /* Allows glass wrapper to show through */
   display: flex;
   flex-direction: column;
   min-height: 0;
