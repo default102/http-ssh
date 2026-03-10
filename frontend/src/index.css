@@ -584,6 +584,11 @@ button {
     padding-bottom: calc(12px + env(safe-area-inset-bottom, 24px)); 
   }
 
+  body.keyboard-open .terminal-wrapper {
+    /* When the keyboard is visibly open, give the DOM substantial breathing room to force the scroll up */
+    padding-bottom: 60px !important;
+  }
+
   .terminal-wrapper .xterm {
     padding: 0;
   }

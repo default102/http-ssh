@@ -96,8 +96,14 @@ const TerminalWindow = forwardRef(({ server, onConnectionChange, isActive }, ref
 
         // Resize handler
         const handleResize = () => {
-            fitAddon.current.fit();
-            if (wsRef.current.readyState === WebSocket.OPEN) {
+            if (fitAddon.current) {
+                try {
+                    fitAddon.current.fit();
+                } catch (e) {
+                    console.error('Fit error', e);
+                }
+            }
+            if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && termInstance.current) {
                 wsRef.current.send(JSON.stringify({ 
                     type: 'resize', 
                     cols: termInstance.current.cols, 
@@ -107,11 +113,29 @@ const TerminalWindow = forwardRef(({ server, onConnectionChange, isActive }, ref
         };
 
         window.addEventListener('resize', handleResize);
+        
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', handleResize);
+        }
+
+        const resizeObserver = new ResizeObserver(() => {
+            handleResize();
+        });
+        
+        if (terminalRef.current) {
+            resizeObserver.observe(terminalRef.current);
+        }
+
         // Initial resize sync
         setTimeout(handleResize, 100);
 
         return () => {
             window.removeEventListener('resize', handleResize);
+            if (window.visualViewport) {
+                window.visualViewport.removeEventListener('resize', handleResize);
+            }
+            resizeObserver.disconnect();
+            
             if (wsRef.current) wsRef.current.close();
             if (termInstance.current) termInstance.current.dispose();
             if(onConnectionChange) onConnectionChange('closed');
