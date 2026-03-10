@@ -129,8 +129,41 @@ const TerminalWindow = forwardRef(({ server, onConnectionChange, isActive }, ref
         // Initial resize sync
         setTimeout(handleResize, 100);
 
+        // Handle mobile native keyboard scrolling
+        const handleFocusIn = (e) => {
+            if (e.target && e.target.classList && e.target.classList.contains('xterm-helper-textarea')) {
+                // Allow the body to scroll natively when keyboard pushes up
+                document.body.style.overflow = 'auto';
+                document.body.style.overscrollBehavior = 'auto';
+                
+                // Give the keyboard time to animate up, then scroll terminal to bottom
+                setTimeout(() => {
+                    if (termInstance.current) {
+                        termInstance.current.scrollToBottom();
+                    }
+                    // Scroll the actual window to the bottom to push the input into view
+                    window.scrollTo(0, document.body.scrollHeight);
+                }, 300);
+            }
+        };
+
+        const handleFocusOut = (e) => {
+            if (e.target && e.target.classList && e.target.classList.contains('xterm-helper-textarea')) {
+                // Revert to fixed non-scrolling body when keyboard is closed
+                window.scrollTo(0, 0);
+                document.body.style.overflow = 'hidden';
+                document.body.style.overscrollBehavior = 'none';
+            }
+        };
+
+        document.addEventListener('focusin', handleFocusIn);
+        document.addEventListener('focusout', handleFocusOut);
+
         return () => {
             window.removeEventListener('resize', handleResize);
+            document.removeEventListener('focusin', handleFocusIn);
+            document.removeEventListener('focusout', handleFocusOut);
+            
             if (window.visualViewport) {
                 window.visualViewport.removeEventListener('resize', handleResize);
             }

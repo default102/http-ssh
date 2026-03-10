@@ -11,7 +11,6 @@ function App() {
   const [activeTabs, setActiveTabs] = useState([]); // [{id: 1, server: {...}}]
   const [currentTabId, setCurrentTabId] = useState(null);
   const terminalRefs = useRef({});
-  const appContainerRef = useRef(null);
   
   // Modals & Menu State
   const [showAddServer, setShowAddServer] = useState(false);
@@ -30,44 +29,6 @@ function App() {
   useEffect(() => {
     fetchServers();
     fetchKeys();
-  }, []);
-
-  // Handle mobile keyboards by detecting viewport height changes
-  useEffect(() => {
-    const handleResize = () => {
-      if (!appContainerRef.current) return;
-      
-      // Use window.innerHeight which correctly reflects the area above the keyboard in modern mobile browsers
-      const currentHeight = window.innerHeight;
-      appContainerRef.current.style.height = `${currentHeight}px`;
-
-      // If the height has shrunk significantly, assume keyboard is open
-      if (currentHeight < window.screen.height * 0.75) {
-        document.body.classList.add('keyboard-open');
-        // Small delay to scroll to top to prevent native iOS scroll offsets from hiding the top nav
-        setTimeout(() => window.scrollTo(0, 0), 50);
-      } else {
-        document.body.classList.remove('keyboard-open');
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    
-    // Fallback for visualViewport if supported and different from innerHeight
-    if (window.visualViewport) {
-       window.visualViewport.addEventListener('resize', handleResize);
-       window.visualViewport.addEventListener('scroll', handleResize);
-    }
-    
-    handleResize(); // initial set
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (window.visualViewport) {
-         window.visualViewport.removeEventListener('resize', handleResize);
-         window.visualViewport.removeEventListener('scroll', handleResize);
-      }
-    };
   }, []);
 
   const handleAddServer = async (e) => {
@@ -187,7 +148,7 @@ function App() {
   };
 
   return (
-    <div className="app-container dark-theme" ref={appContainerRef}>
+    <div className="app-container dark-theme">
       
       {/* Mobile Top Nav */}
       <div className="mobile-nav glass-panel">

@@ -69,13 +69,13 @@ body {
 
 .app-container {
   display: flex;
-  position: fixed;
+  position: absolute; /* Revert to absolute to allow iOS native scroll-to-focus on keyboard appearance */
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100dvh;
 }
 
 /* Glassmorphism Classes (Enhanced Premium) */
@@ -580,13 +580,7 @@ button {
 
   .terminal-wrapper {
     padding: 4px;
-    /* Uses iOS safe area to ensure bottom row is visible */
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 24px)); 
-  }
-
-  body.keyboard-open .terminal-wrapper {
-    /* When the keyboard is visibly open, give the DOM substantial breathing room to force the scroll up */
-    padding-bottom: 60px !important;
+    padding-bottom: env(safe-area-inset-bottom, 24px); /* Only safe-area needed if absolutely positioned */
   }
 
   .terminal-wrapper .xterm {
