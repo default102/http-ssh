@@ -566,6 +566,12 @@ button {
     height: calc(100% - 56px);
   }
 
+  .wrapper-glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: #0b0f19; /* Solid background prevents mobile composite lag */
+  }
+
   .terminal-container {
     margin: 8px;
     border-radius: 8px;
@@ -574,7 +580,8 @@ button {
 
   .terminal-wrapper {
     padding: 4px;
-    padding-bottom: 12px; /* Slight lift for the bottom cursor line */
+    /* Uses iOS safe area to ensure bottom row is visible */
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 24px)); 
   }
 
   .terminal-wrapper .xterm {
